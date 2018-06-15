@@ -1,4 +1,5 @@
-﻿using KDRGoldAPI.Models;
+﻿using KDRGoldAPI.DATA;
+using KDRGoldAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace KDRGoldAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]/[action]/")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class TestController : ControllerBase
     {
@@ -15,23 +17,24 @@ namespace KDRGoldAPI.Controllers
 
         public TestController(UserContext context)
         {
+            _context = null;
             _context = context;
 
             if (_context.Users.Count() == 0)
             {
                 _context.Users.Add(new User { UserName = "Item1" });
-                _context.SaveChanges();
+                //_context.SaveChanges();
             }
         }
 
         [HttpGet]
-        public ActionResult<List<User>> GetAll()
+        public List<User> GetAll()
         {
             return _context.Users.ToList();
         }
 
-        [HttpGet("{id}", Name = "GetTodo")]
-        public ActionResult<User> GetById(long id)
+        [HttpGet("{id}", Name = "GetById")]
+        public ActionResult<User> GetById(int id)
         {
             var item = _context.Users.Find(id);
             if (item == null)

@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace KDRGoldAPI.DATA
 {
-    public class UserContext : Microsoft.EntityFrameworkCore.DbContext
+    public class FiskesuppeContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public UserContext(DbContextOptions<UserContext> options)
+        public FiskesuppeContext(DbContextOptions<FiskesuppeContext> options)
           :
 
             base(options)
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<Fiskesuppe> View_Sale_Fiskesuppe { get; set; }
     }
 }
