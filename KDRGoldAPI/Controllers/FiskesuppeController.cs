@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using KDRGoldAPI.DATA;
 using KDRGoldAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace KDRGoldAPI.Controllers
 {
     //[Route("api/[controller]/[action]/")]
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class FiskesuppeController : ControllerBase
@@ -73,17 +78,17 @@ namespace KDRGoldAPI.Controllers
 
         //[HttpGet]
         [HttpGet("{id?}")]
-        public IQueryable<ReturnData> Year(int id = 0)
+        public IQueryable<ReturnData> Year(int year = 0)
         {
             String name = "Current Year";
-
+            //String TOKEN = Token;
             DateTime Ystart = new DateTime(EDay.Year - 5, 1, 1);
 
-            if (id != 0)
+            if (year != 0)
             {
-                name = "Year: " + id;
-                Ystart = new DateTime(id, 1, 1);
-                EDay = new DateTime(id + 1, 1, 1);
+                name = "Year: " + year;
+                Ystart = new DateTime(year, 1, 1);
+                EDay = new DateTime(year + 1, 1, 1);
                 EDay.AddDays(-1);
                 return GetData(Ystart, EDay, name);
             }
@@ -91,7 +96,7 @@ namespace KDRGoldAPI.Controllers
             {
                 var grouped = (from p in _context.View_Sale_Fiskesuppe
                                group p by new { year = p.SalesDate.Year } into d
-                               select new ReturnData { year = (d.Key.year), Quantity = d.Sum(y => y.Quantity), AmountDl = d.Sum(f => f.AmountDl) }).OrderByDescending(g => g.year);
+                               select new ReturnData { year = (d.Key.year), Quantity = d.Sum(y => y.Quantity), Liters = d.Sum(f => f.AmountDl) }).OrderByDescending(g => g.year);
 
                 return grouped;
             }
@@ -109,7 +114,7 @@ namespace KDRGoldAPI.Controllers
                     {
                         Name = method,
                         Quantity = g.Sum(x => x.Quantity),
-                        AmountDl = g.Sum(x => x.AmountDl)
+                        Liters = g.Sum(x => x.AmountDl)
                     };
 
             return q;
