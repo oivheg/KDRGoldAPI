@@ -38,11 +38,19 @@ namespace KDRGoldAPI
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-
-            services.AddDbContext<FiskesuppeContext>(options =>
+            services.AddDbContext<MonitorContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+            Dictionary<string, string> connStrs = new Dictionary<string, string>();
+            connStrs.Add("DB1", Configuration["Data:DB1Connection:Server = HEGGLAND\\HEGGLAND; Database = HegglandTEst; Integrated Security = True; Trusted_Connection = True; MultipleActiveResultSets = true"]);
+            connStrs.Add("DB2", Configuration["Data:DB2Connection:ConnectionString"]);
+            DbContextFactory.SetConnectionString(connStrs);
+
+            //services.AddDbContext<FiskesuppeContext>(options =>
+            //{
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            //});
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
